@@ -1,0 +1,45 @@
+app-id: co.betacraft.Betacraft
+runtime: org.freedesktop.Platform
+runtime-version: '21.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Platform.GL.default
+command: run.sh
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=all
+  - --device=dri
+  - --share=network
+  - --socket=pulseaudio
+  - --persist=.betacraft
+modules:
+  - name: betacraft
+    buildsystem: simple
+    build-commands:
+      - install -D launcher-1.09_16.jar /app/bin/launcher.jar
+      - install -D run.sh /app/bin/run.sh
+      - install -D ${FLATPAK_ID}.desktop -t /app/share/applications
+    sources:
+      - type: file
+        path: run.sh
+      - type: file
+        path: launcher-1.09_16.jar
+      - type: file
+        path: co.betacraft.Betacraft.desktop
+  - name: java
+    buildsystem: simple
+    build-commands:
+      - unzip zulu8.66.0.15-ca-jdk8.0.352-linux_x64.zip -d /app/bin
+    sources:
+      - type: file
+        url: https://cdn.azul.com/zulu/bin/zulu8.66.0.15-ca-jdk8.0.352-linux_x64.zip
+        sha256: 281484b54ccfc2e6f476dda71ebcfcd28a41e4563d949850d5592e1787a755a0
+  - name: xrandr
+    buildsystem: autotools
+    sources:
+      - type: archive
+        url: https://xorg.freedesktop.org/archive/individual/app/xrandr-1.5.1.tar.xz
+        sha256: 7bc76daf9d72f8aff885efad04ce06b90488a1a169d118dea8a2b661832e8762
+    cleanup: [/share/man, /bin/xkeystone]
